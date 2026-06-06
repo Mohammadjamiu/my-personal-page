@@ -1,0 +1,29 @@
+---
+---
+
+<div class="border border-border bg-background p-6">
+  <div class="mb-3 flex items-center gap-2">
+    <span class="status-dot" aria-hidden="true"></span>
+    <p class="section-eyebrow">Newsletter</p>
+  </div>
+
+  <h2 class="font-serif text-lg font-semibold text-foreground mb-1.5 text-balance">Stay in the loop</h2>
+  <p class="mb-5 text-sm leading-relaxed text-muted-foreground">
+    New writing on AI, cybersecurity, software engineering, and building in Africa. No spam.
+  </p>
+
+  <form
+    action="https://buttondown.email/api/emails/embed-subscribe/mohammadjamiu"
+    method="post"
+    target="popupwindow"
+    onsubmit="window.open('https://buttondown.email/mohammadjamiu', 'popupwindow')"
+    class="flex flex-col gap-2"
+  >
+    <input type="email" name="email" placeholder="you@email.com" required class="input-field w-full" />
+    <button type="submit" class="btn-cta w-full justify-center">Subscribe</button>
+  </form>
+
+  <p class="mt-3 text-center text-xs text-muted-foreground">
+    Or <a href="/rss.xml" class="underline decoration-border underline-offset-4 hover:decoration-foreground">RSS</a>
+  </p>
+</div>

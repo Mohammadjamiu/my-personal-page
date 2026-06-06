@@ -1,0 +1,224 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import TopicCard from '../components/TopicCard.astro';
+import HeroNewsletter from '../components/HeroNewsletter.astro';
+import Newsletter from '../components/Newsletter.astro';
+import CategoryPostStrip from '../components/home/CategoryPostStrip.astro';
+import { HomeProjectsList } from '@/components/home/HomeProjectsList';
+import { sortProjects } from '@/lib/sort-projects';
+import { getCollection } from 'astro:content';
+import type { TopicIconName } from '../lib/topic-icons';
+
+type TopicEntry = {
+  id: string;
+  title: string;
+  description: string;
+  icon: TopicIconName;
+  tint: 'zinc';
+};
+
+const allPosts = await getCollection('blog');
+const published = allPosts.filter((p) => !p.data.draft);
+const byDate = (a: (typeof published)[0], b: (typeof published)[0]) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+
+const aiPosts = published.filter((p) => p.data.category === 'ai').sort(byDate).slice(0, 6);
+const devNotesArticlePosts = published.filter((p) => p.data.category === 'dev-notes').sort(byDate).slice(0, 6);
+const personalFinancePosts = published.filter((p) => p.data.category === 'personal-finance').sort(byDate).slice(0, 6);
+
+const allProjects = await getCollection('projects');
+const projectsSorted = sortProjects(allProjects);
+
+function domainFromUrl(url?: string) {
+  if (!url) return undefined;
+  try {
+    return new URL(url).hostname.replace(/^www\./, '').toUpperCase();
+  } catch {
+    return undefined;
+  }
+}
+
+function toHomeItem(p: (typeof projectsSorted)[0]) {
+  return {
+    id: p.id,
+    title: p.data.title,
+    description: p.data.description,
+    url: p.data.url,
+    github: p.data.github,
+    npm: p.data.npm,
+    domainLabel: domainFromUrl(p.data.url),
+  };
+}
+
+const workProjects = projectsSorted.filter((p) => !p.data.openSource).map(toHomeItem);
+const openSourceProjects = projectsSorted.filter((p) => p.data.openSource).map(toHomeItem);
+
+const topics: TopicEntry[] = [
+  {
+    id: 'ai',
+    title: 'AI & ML',
+    description: 'LLM security, applied AI, and language model engineering.',
+    icon: 'brain',
+    tint: 'zinc' as const,
+  },
+  {
+    id: 'cybersecurity',
+    title: 'Cybersecurity',
+    description: 'OWASP, SAST, secure coding, and defensive engineering.',
+    icon: 'shield',
+    tint: 'zinc' as const,
+  },
+  {
+    id: 'dev-notes',
+    title: 'Dev notes',
+    description: 'Tooling, frameworks, and things learned while building.',
+    icon: 'wrench',
+    tint: 'zinc' as const,
+  },
+  {
+    id: 'research',
+    title: 'Research',
+    description: 'Telecom, published papers, and experiments.',
+    icon: 'microscope',
+    tint: 'zinc' as const,
+  },
+  {
+    id: 'building-products',
+    title: 'Building products',
+    description: 'Founding, shipping, and iterating on software.',
+    icon: 'hammer',
+    tint: 'zinc' as const,
+  },
+  {
+    id: 'personal-finance',
+    title: 'Personal & Islamic finance',
+    description: 'Wealth, riba-free thinking, and financial literacy notes.',
+    icon: 'wallet',
+    tint: 'zinc' as const,
+  },
+];
+---
+
+<Layout title="Mohammad Jamiu — Engineer, Researcher, Founder">
+  <Header />
+
+  <main class="grow">
+    <section class="mx-auto max-w-5xl px-4 pb-20 pt-16 sm:px-6 sm:pb-28 sm:pt-24 lg:px-8">
+      <div class="animate-fade-up">
+        <h1 class="hero-name">Mohammad Jamiu</h1>
+        <p class="hero-role">AI security · Software engineering · Founder</p>
+
+        <p class="mt-10 max-w-xl font-sans text-sm leading-relaxed text-muted-foreground">
+          Building, researching, and writing about AI security, software engineering, and technology for real-world impact. If I learn something useful or build something interesting, you'll find it here.
+        </p>
+
+        <nav class="mt-8 flex flex-wrap gap-x-6 gap-y-2 font-sans text-sm" aria-label="Social">
+          <a href="https://github.com/Mohammadjamiu" target="_blank" rel="noopener noreferrer" class="link-underline">
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/in/mohammad-jamiu-balogun/" target="_blank" rel="noopener noreferrer" class="link-underline">
+            LinkedIn
+          </a>
+          <a href="mailto:balogunmohammedjamiu@gmail.com" class="link-underline">Email</a>
+          <a href="/articles" class="link-underline">All articles</a>
+          <a href="/about" class="link-underline">About</a>
+        </nav>
+      </div>
+
+      <div class="mt-12 border border-border bg-muted/40 p-4 font-sans text-sm leading-relaxed dark:bg-zinc-950/60 sm:p-5">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground">Now</p>
+        <p class="mt-2 text-foreground/90">
+          Founding <strong>MonoEd Africa</strong> — AI tools for Nigerian students. Maintaining{' '}
+          <a
+            href="https://www.npmjs.com/package/cite-formatter"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-primary underline decoration-border underline-offset-4 hover:decoration-primary"
+          >
+            cite-formatter
+          </a>{' '}
+          on npm. Writing on LLM security and AI engineering.
+        </p>
+      </div>
+
+      <div class="mt-16 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,280px)] lg:items-start lg:gap-12">
+        <div class="min-w-0">
+          <div class="mb-8 border-b border-border pb-2">
+            <h2 class="section-title">Projects</h2>
+            <p class="mt-2 max-w-lg text-sm text-muted-foreground">
+              Things I've built and maintain. Open source entries link to GitHub and npm.
+            </p>
+          </div>
+          <HomeProjectsList workProjects={workProjects} openSourceProjects={openSourceProjects} />
+          <p class="mt-8 text-sm">
+            <a href="/projects" class="link-arrow group inline-flex">
+              All projects
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="h-3.5 w-3.5">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </p>
+        </div>
+
+        <aside class="space-y-6 lg:sticky lg:top-20">
+          <HeroNewsletter />
+        </aside>
+      </div>
+    </section>
+
+    <section class="border-t border-border py-14 sm:py-20">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <div class="mb-10 border-b border-border pb-2">
+          <p class="section-eyebrow mb-2">Explore</p>
+          <h2 class="section-title">By topic</h2>
+          <p class="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">
+            Six areas I write in regularly. AI and security are most active; finance is occasional.
+          </p>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {topics.map((t) => (
+            <TopicCard href={`/category/${t.id}`} title={t.title} description={t.description} icon={t.icon} tint={t.tint} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <CategoryPostStrip
+      eyebrow="AI"
+      title="AI & machine learning"
+      description="LLM security research, applied AI engineering, and practical notes on language models."
+      viewAllHref="/category/ai"
+      posts={aiPosts}
+    />
+
+    <CategoryPostStrip
+      eyebrow="Code"
+      title="Dev Note"
+      description="Short write-ups on tools, libraries, and things learned while building."
+      viewAllHref="/category/dev-notes"
+      posts={devNotesArticlePosts}
+    />
+
+    <CategoryPostStrip
+      eyebrow="Finance"
+      title="Personal & Islamic finance"
+      description="Notes on wealth, riba-free thinking, and financial literacy — less frequent, but worth writing."
+      viewAllHref="/category/personal-finance"
+      posts={personalFinancePosts}
+    />
+
+    <section id="newsletter" class="scroll-mt-20 border-t border-border py-16 sm:py-24">
+      <div class="mx-auto max-w-xl px-4 text-center sm:px-6">
+        <p class="section-eyebrow mb-2">Newsletter</p>
+        <h2 class="section-title mb-3">Next note, in your inbox</h2>
+        <p class="mb-8 text-sm leading-relaxed text-muted-foreground">
+          No spam — occasional updates when there is something worth sending.
+        </p>
+        <Newsletter />
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>

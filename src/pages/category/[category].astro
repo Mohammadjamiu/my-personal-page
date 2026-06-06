@@ -1,0 +1,135 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const categories = [
+    'ai',
+    'cybersecurity',
+    'software-engineering',
+    'research',
+    'building-products',
+    'africa-tech',
+    'essays',
+    'personal-finance',
+    'dev-notes',
+  ];
+  return categories.map((category) => ({ params: { category } }));
+}
+
+const { category } = Astro.params;
+
+const allPosts = await getCollection('blog');
+const posts = allPosts
+  .filter((p) => p.data.category === category && !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const categoryInfo: Record<string, { label: string; description: string }> = {
+  ai: {
+    label: 'AI & Machine Learning',
+    description: 'Language models, intelligent systems, and what AI actually means for people in Africa and beyond.',
+  },
+  cybersecurity: {
+    label: 'Cybersecurity',
+    description: 'Web security, threat modeling, OWASP, and writing code that doesn\'t embarrass you later.',
+  },
+  'software-engineering': {
+    label: 'Software Engineering',
+    description: 'Tooling, architecture decisions, debugging notes, and the craft of building reliable software.',
+  },
+  research: {
+    label: 'Research',
+    description: 'Papers, experiments, and lessons from Telecommunication Engineering, 5G, and applied computer science.',
+  },
+  'building-products': {
+    label: 'Building Products',
+    description: 'The honest account of shipping software — the constraints, failures, pivots, and occasional wins.',
+  },
+  'africa-tech': {
+    label: 'Africa & Tech',
+    description: 'Infrastructure gaps, ecosystem realities, and why building technology in Africa is its own discipline.',
+  },
+  essays: {
+    label: 'Essays',
+    description: 'Broader reflections on faith, knowledge, ethics, and how I think about the world.',
+  },
+  'personal-finance': {
+    label: 'Personal & Islamic finance',
+    description: 'Wealth, riba-free thinking, and notes from books and lectures — not financial advice.',
+  },
+  'dev-notes': {
+    label: 'Dev notes',
+    description: 'Short engineering notes: libraries, frameworks, and lessons from building.',
+  },
+};
+
+const info = categoryInfo[category] ?? {
+  label: category,
+  description: '',
+};
+---
+
+<Layout title={`${info.label} — Mohammad Jamiu`} description={info.description}>
+  <Header />
+
+  <main class="flex-grow">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+
+      <nav class="mb-8" aria-label="Breadcrumb">
+        <ol class="flex items-center gap-2 text-xs text-muted-foreground">
+          <li><a href="/" class="underline decoration-border underline-offset-4 hover:decoration-foreground">Home</a></li>
+          <li>/</li>
+          <li><a href="/articles" class="underline decoration-border underline-offset-4 hover:decoration-foreground">Note</a></li>
+          <li>/</li>
+          <li class="text-foreground/80">{info.label}</li>
+        </ol>
+      </nav>
+
+      <PageHeader
+        label="Category"
+        title={info.label}
+        description={info.description}
+        meta={`${posts.length} ${posts.length === 1 ? 'article' : 'articles'}`}
+      />
+
+      <div class="space-y-3">
+        {posts.map((post) => (
+          <article>
+            <a href={`/articles/${post.id}`} class="group block border border-border bg-background p-5 sm:p-6 transition-colors duration-150 hover:border-foreground/25">
+              <div class="flex items-center gap-3 mb-2.5 text-xs text-muted-foreground">
+                <time datetime={post.data.pubDate.toISOString()}>
+                  {post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </time>
+                {post.data.readingTime && (
+                  <>
+                    <span>·</span>
+                    <span>{post.data.readingTime}</span>
+                  </>
+                )}
+              </div>
+
+              <h2 class="font-serif text-lg sm:text-xl font-semibold text-foreground mb-1.5 leading-snug">
+                {post.data.title}
+              </h2>
+
+              <p class="text-sm text-ink-muted leading-relaxed line-clamp-2">
+                {post.data.description}
+              </p>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      {posts.length === 0 && (
+        <div class="card text-center py-16">
+          <p class="text-ink-subtle">No articles in this category yet. Check back soon.</p>
+        </div>
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

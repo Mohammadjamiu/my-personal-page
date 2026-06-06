@@ -1,0 +1,168 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ArticleCard from '../ArticleCard.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  description?: string;
+  viewAllHref: string;
+  viewAllLabel?: string;
+  posts: CollectionEntry<'blog'>[];
+  /** Extra link (e.g. raw dev notebook) */
+  secondaryLink?: { href: string; label: string };
+}
+
+const { eyebrow, title, description, viewAllHref, viewAllLabel = 'View all', posts, secondaryLink } = Astro.props;
+---
+
+{
+  posts.length > 0 && (
+    <section class="border-t border-border py-12 sm:py-16">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-8 flex flex-col gap-4 border-b border-border pb-4 sm:flex-row sm:items-end sm:justify-between">
+          <div class="min-w-0 flex-1">
+            <p class="section-eyebrow mb-2">{eyebrow}</p>
+            <h2 class="section-title">{title}</h2>
+            {description && <p class="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">{description}</p>}
+          </div>
+          <div class="flex shrink-0 flex-wrap items-center gap-x-5 gap-y-2">
+            {secondaryLink && (
+              <a href={secondaryLink.href} class="link-arrow group text-sm">
+                {secondaryLink.label}
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="h-3.5 w-3.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            )}
+            <a href={viewAllHref} class="link-arrow group text-sm">
+              {viewAllLabel}
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="h-3.5 w-3.5">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="home-scroll-strip" data-home-scroll-strip>
+          <div
+            class="scroll-row scrollbar-thin -mx-4 px-4 pb-1 sm:-mx-0 sm:px-0"
+            data-scroll-strip-track
+          >
+            {posts.map((post) => (
+              <div class="w-[min(88vw,300px)] shrink-0 sm:w-[280px]" data-scroll-strip-card>
+                <ArticleCard post={post} />
+              </div>
+            ))}
+          </div>
+
+          <div
+            class="scroll-strip-dots flex justify-center gap-1.5 pt-3"
+            data-scroll-strip-dots
+            role="group"
+            aria-label={`${title} — scroll for more posts`}
+            hidden
+          >
+            {posts.map((_, i) => (
+              <button
+                type="button"
+                class="scroll-strip-dot h-2 w-2 shrink-0 rounded-full border border-transparent bg-muted-foreground/30 transition-[transform,background-color] duration-150 hover:bg-muted-foreground/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                data-scroll-strip-dot={i}
+                aria-label={`Show post ${i + 1} of ${posts.length}`}
+                aria-current="false"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  function prefersReducedMotion() {
+    return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+  }
+
+  function initScrollStrip(root) {
+    if (root.dataset.stripBound === '1') return;
+    const track = root.querySelector('[data-scroll-strip-track]');
+    const dotsWrap = root.querySelector('[data-scroll-strip-dots]');
+    const dots = root.querySelectorAll('[data-scroll-strip-dot]');
+    const cards = root.querySelectorAll('[data-scroll-strip-card]');
+    if (!track || !dotsWrap || dots.length === 0 || cards.length === 0) return;
+
+    function overflowX() {
+      return track.scrollWidth > track.clientWidth + 4;
+    }
+
+    function activeIndex() {
+      const mid = track.scrollLeft + track.clientWidth / 2;
+      let best = 0;
+      let bestDist = Infinity;
+      cards.forEach((card, i) => {
+        const cx = card.offsetLeft + card.offsetWidth / 2;
+        const d = Math.abs(cx - mid);
+        if (d < bestDist) {
+          bestDist = d;
+          best = i;
+        }
+      });
+      return best;
+    }
+
+    function paintDots(i) {
+      dots.forEach((dot, idx) => {
+        const on = idx === i;
+        dot.setAttribute('aria-current', on ? 'true' : 'false');
+        dot.classList.toggle('bg-primary', on);
+        dot.classList.toggle('scale-125', on);
+        dot.classList.toggle('bg-muted-foreground/30', !on);
+      });
+    }
+
+    function sync() {
+      const show = overflowX();
+      dotsWrap.hidden = !show;
+      if (!show) return;
+      paintDots(activeIndex());
+    }
+
+    let scrollRaf = 0;
+    track.addEventListener(
+      'scroll',
+      () => {
+        if (scrollRaf) return;
+        scrollRaf = requestAnimationFrame(() => {
+          scrollRaf = 0;
+          sync();
+        });
+      },
+      { passive: true },
+    );
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        const card = cards[i];
+        if (!card) return;
+        const behavior = prefersReducedMotion() ? 'instant' : 'smooth';
+        track.scrollTo({ left: card.offsetLeft, behavior });
+      });
+    });
+
+    const ro = new ResizeObserver(() => sync());
+    ro.observe(track);
+    root.dataset.stripBound = '1';
+    sync();
+  }
+
+  function initAllScrollStrips() {
+    document.querySelectorAll('[data-home-scroll-strip]').forEach(initScrollStrip);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAllScrollStrips, { once: true });
+  } else {
+    initAllScrollStrips();
+  }
+</script>

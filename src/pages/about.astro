@@ -1,0 +1,369 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const SH = "mb-5 border-b border-border pb-2 font-serif text-lg font-semibold tracking-tight text-foreground";
+const ITEM_TITLE = "text-sm font-semibold text-foreground font-sans";
+const ITEM_ORG   = "text-sm text-muted-foreground";
+const DATE       = "shrink-0 text-[11px] font-medium uppercase tracking-wider text-muted-foreground";
+const LIST       = "space-y-1.5 border-l-2 border-border pl-4";
+const LI         = "text-sm leading-relaxed text-muted-foreground";
+const ROW        = "flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4";
+---
+
+<Layout
+  title="About — Mohammad Jamiu"
+  description="Telecommunication engineer, AI security researcher, and founder from Kano, Nigeria."
+>
+  <Header />
+
+  <main class="grow">
+    <div class="mx-auto max-w-4xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
+
+      <!-- ── Profile hero ───────────────────────────────────────── -->
+      <div class="mb-14 flex flex-col gap-8 sm:flex-row sm:items-start sm:gap-10">
+
+        <!-- Photo with primary-colour offset accent -->
+        <div class="shrink-0">
+          <div class="relative h-28 w-28 sm:h-36 sm:w-36">
+            <!-- offset decorative square -->
+            <div
+              class="absolute -bottom-2.5 -right-2.5 h-full w-full border border-primary/40 bg-primary/8 sm:-bottom-3 sm:-right-3"
+              aria-hidden="true"
+            ></div>
+            <!-- photo -->
+            <div class="relative h-full w-full overflow-hidden border-2 border-primary">
+              <img
+                src="/my-photo.jpeg"
+                alt="Mohammad Jamiu"
+                class="h-full w-full object-cover object-top transition-transform duration-500 hover:scale-105"
+                loading="eager"
+              />
+            </div>
+            <!-- small primary pip in the top-left corner -->
+            <span class="absolute -left-1.5 -top-1.5 h-3 w-3 bg-primary" aria-hidden="true"></span>
+          </div>
+        </div>
+
+        <div class="min-w-0 animate-fade-up">
+          <p class="section-eyebrow mb-2">About</p>
+          <h1 class="font-serif text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            Mohammad-Jamiu Babatunde Balogun
+          </h1>
+          <p class="mt-2 font-sans text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+            AI Security · Software Engineering · Founder
+          </p>
+          <p class="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
+            Telecommunication engineer (First Class Honours, Best Graduating Student — Bayero University, Kano).
+            I research how AI systems fail at security, build open source tooling, and found software products.
+          </p>
+          <div class="mt-5 flex flex-wrap items-center gap-2">
+            <a href="mailto:balogunmohammedjamiu@gmail.com" class="btn-secondary !px-3 !py-1.5 text-xs">Email</a>
+            <a href="https://www.linkedin.com/in/mohammad-jamiu-balogun/" target="_blank" rel="noopener noreferrer" class="btn-secondary !px-3 !py-1.5 text-xs">LinkedIn</a>
+            <a href="https://github.com/Mohammadjamiu" target="_blank" rel="noopener noreferrer" class="btn-secondary !px-3 !py-1.5 text-xs">GitHub</a>
+            <a href="https://orcid.org/YOUR-ORCID-ID" target="_blank" rel="noopener noreferrer" class="btn-secondary !px-3 !py-1.5 text-xs">ORCID</a>
+            <span class="hidden text-muted-foreground sm:inline" aria-hidden>·</span>
+            <span class="text-xs text-muted-foreground">Kano, Nigeria</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Sections ────────────────────────────────────────────── -->
+      <div class="space-y-14">
+
+        <!-- Education -->
+        <section>
+          <h2 class={SH}>Education</h2>
+          <div class="space-y-3">
+            <div class={ROW}>
+              <div>
+                <p class={ITEM_TITLE}>B.Eng. Telecommunications Engineering</p>
+                <p class={ITEM_ORG}>Bayero University, Kano (BUK)</p>
+              </div>
+              <span class={DATE}>Dec 2017 – May 2024</span>
+            </div>
+            <ul class={LIST}>
+              <li class={LI}>CGPA <strong class="text-foreground">4.64 / 5.00</strong> — First Class Honours · Best Graduating Student</li>
+              <li class={LI}>Thesis: GSM-Based Weather Reporting System for Base Transceiver Stations (Arduino UNO + SIM900)</li>
+              <li class={LI}>Bayero University Scholarship Award (Level 300 & 400) · NUESA Award of Excellence</li>
+              <li class={LI}>Coursework: Computer Networks · Wireless Communications · Digital Signal Processing · Embedded Systems</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Research interests -->
+        <section>
+          <h2 class={SH}>Research interests</h2>
+          <div class="flex flex-wrap gap-2">
+            {[
+              'AI Security', 'LLM Security Evaluation', 'Secure Code Generation',
+              'Software Vulnerability Analysis', 'Applied Machine Learning',
+              'Network Security', 'Cybersecurity', 'Secure Software Systems',
+            ].map((t) => (
+              <span class="tag normal-case tracking-normal text-xs">{t}</span>
+            ))}
+          </div>
+        </section>
+
+        <!-- Publications -->
+        <section>
+          <h2 class={SH}>Publications</h2>
+          <ol class="space-y-4">
+            {[
+              {
+                authors: 'Balogun, M. B.*, Geza, A. S., & Jimada, Y. U.',
+                year: '2026',
+                title: 'Security Benchmarking of AI-Generated Web Application Code: An OWASP-Based Comparative Study of Coding LLMs.',
+                journal: 'World Journal of Advanced Engineering Technology and Sciences,',
+                volume: '19(3), 009–017.',
+                doi: 'https://doi.org/10.30574/wjaets.2026.19.3.0292',
+              },
+              {
+                authors: 'Umar, A. A., Salisu, A. N., Ajidoku, L., Balogun, M. B., & Abdulhadi, Z. A.',
+                year: '2026',
+                title: 'An IoT-Enabled High-Frequency Smart Energy Meter with Web-Based Data Management and Control.',
+                journal: 'World Journal of Advanced Engineering Technology and Sciences,',
+                volume: '18(1).',
+                doi: 'https://doi.org/10.30574/wjaets.2026.18.1.0041',
+              },
+            ].map((pub, i) => (
+              <li class="flex gap-4 border border-border bg-background p-4 text-sm leading-relaxed">
+                <span class="mt-0.5 shrink-0 font-serif text-base font-semibold text-primary">{i + 1}.</span>
+                <div class="min-w-0">
+                  <p class="text-muted-foreground">
+                    <span class="font-medium text-foreground">{pub.authors}</span> ({pub.year}).{' '}
+                    <em>{pub.title}</em>{' '}
+                    <span class="text-foreground">{pub.journal}</span> {pub.volume}
+                  </p>
+                  <a
+                    href={pub.doi}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="mt-1 inline-block break-all text-xs text-primary underline decoration-border underline-offset-4 hover:decoration-primary"
+                  >
+                    {pub.doi}
+                  </a>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <!-- Open source -->
+        <section>
+          <h2 class={SH}>Open source</h2>
+          <div class="space-y-4">
+            {[
+              {
+                name: 'PDF Context Extractor',
+                role: 'Creator & Maintainer · 2026–Present',
+                desc: 'Local-first research productivity tool. Browser-based PDF extraction with page selection, full-text search, export, and AI-ready prompt generation. Privacy-preserving — documents never leave the device.',
+                tags: ['React', 'TypeScript', 'Vite', 'Zustand', 'PDF.js'],
+                links: [{ label: 'GitHub', href: 'https://github.com/Mohammadjamiu/PDF-Context-Extractor' }],
+              },
+              {
+                name: 'Cite Formatter',
+                role: 'Creator & Maintainer · 2026–Present',
+                desc: 'TypeScript citation engine supporting APA, IEEE, Chicago, MLA, Harvard, and Vancouver. Continuous numbering for multi-chapter documents, BibTeX export, CLI, and CI integration. Built for AI-assisted academic writing.',
+                tags: ['TypeScript', 'Node.js', 'GitHub Actions', 'npm'],
+                links: [
+                  { label: 'GitHub', href: 'https://github.com/Mohammadjamiu/cite-formatter' },
+                  { label: 'npm', href: 'https://www.npmjs.com/package/cite-formatter' },
+                ],
+              },
+            ].map((p) => (
+              <div class="border border-border bg-background p-5">
+                <div class="flex flex-wrap items-baseline justify-between gap-3">
+                  <p class="font-serif text-base font-semibold text-foreground sm:text-lg">{p.name}</p>
+                  <span class="text-xs text-muted-foreground">{p.role}</span>
+                </div>
+                <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {p.desc}{' '}
+                  {p.links.map((l, i) => (
+                    <>
+                      {i > 0 ? (
+                        <span class="text-foreground/40" aria-hidden="true">
+                          {' '}
+                          ·{' '}
+                        </span>
+                      ) : null}
+                      <a
+                        href={l.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="font-semibold text-primary underline decoration-border underline-offset-4 hover:decoration-primary"
+                      >
+                        {l.label}
+                      </a>
+                    </>
+                  ))}
+                </p>
+                <div class="mt-2 flex flex-wrap gap-1.5">
+                  {p.tags.map((t) => (
+                    <span class="tag normal-case tracking-normal text-[10px]">{t}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Technical projects -->
+        <section>
+          <h2 class={SH}>Technical projects</h2>
+          <div class="space-y-3">
+            <div class={ROW}>
+              <div>
+                <p class={ITEM_TITLE}>MonoEd Africa</p>
+                <p class={ITEM_ORG}>Founder & Lead Developer · Nigeria</p>
+              </div>
+              <span class={DATE}>2025 – Present</span>
+            </div>
+            <ul class={LIST}>
+              <li class={LI}>Founded an AI-powered academic platform with tools for SIWES documentation, project proposals, research discovery, citation verification, and CV generation.</li>
+              <li class={LI}>Designed platform architecture, product strategy, and full technical implementation.</li>
+              <li class={LI}>Deployed and used by students across Nigerian universities and polytechnics.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Research experience -->
+        <section>
+          <h2 class={SH}>Research experience</h2>
+          <div class="space-y-6">
+            <div class="space-y-3">
+              <div class={ROW}>
+                <div>
+                  <p class={ITEM_TITLE}>AI Security Benchmarking</p>
+                  <p class={ITEM_ORG}>Independent Researcher · Kano, Nigeria</p>
+                </div>
+                <span class={DATE}>2025 – 2026</span>
+              </div>
+              <ul class={LIST}>
+                <li class={LI}>Designed a comparative security assessment of AI-generated web application code using an OWASP Top 10 framework.</li>
+                <li class={LI}>Conducted static application security testing with Semgrep OSS; manual validation of vulnerability findings.</li>
+                <li class={LI}>Published reproducible benchmarking methodology in a peer-reviewed journal.</li>
+              </ul>
+            </div>
+            <div class="space-y-3">
+              <div class={ROW}>
+                <div>
+                  <p class={ITEM_TITLE}>Undergraduate Researcher</p>
+                  <p class={ITEM_ORG}>Dept. of Telecommunications Engineering, Bayero University</p>
+                </div>
+                <span class={DATE}>2023 – 2024</span>
+              </div>
+              <ul class={LIST}>
+                <li class={LI}>Designed a GSM-enabled weather monitoring system for base transceiver stations.</li>
+                <li class={LI}>Developed sensor acquisition and GSM communication modules using Arduino UNO and SIM900.</li>
+                <li class={LI}>Built a low-cost prototype for remote BTS monitoring in resource-constrained environments.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Experience -->
+        <section>
+          <h2 class={SH}>Experience</h2>
+          <div class="space-y-6">
+            <div class="space-y-3">
+              <div class={ROW}>
+                <div>
+                  <p class={ITEM_TITLE}>Telecommunication Engineering Intern</p>
+                  <p class={ITEM_ORG}>M. Yahaya and Associates · Kano, Nigeria</p>
+                </div>
+                <span class={DATE}>Dec 2022 – May 2023</span>
+              </div>
+              <ul class={LIST}>
+                <li class={LI}>GIS-based analysis with ArcGIS JavaScript tools; diagnosed and resolved networking and hardware faults.</li>
+                <li class={LI}>Processed and analysed engineering datasets; supported field operations and infrastructure maintenance.</li>
+              </ul>
+            </div>
+            <div class="space-y-3">
+              <div class={ROW}>
+                <div>
+                  <p class={ITEM_TITLE}>Academic Tutor & Student Mentor</p>
+                  <p class={ITEM_ORG}>Bayero University</p>
+                </div>
+                <span class={DATE}>2019 – 2024</span>
+              </div>
+              <ul class={LIST}>
+                <li class={LI}>Mentored 150+ engineering students; facilitated workshops in Python, MATLAB, AutoCAD, and embedded systems.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Skills -->
+        <section>
+          <h2 class={SH}>Technical skills</h2>
+          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { label: 'Languages',     value: 'Python, JavaScript, TypeScript, C/C++, SQL' },
+              { label: 'Security',      value: 'OWASP Top 10, Semgrep OSS, SAST, Secure Coding' },
+              { label: 'Web / backend', value: 'React, Node.js, REST APIs, Git, GitHub Actions' },
+              { label: 'Networking',    value: 'Computer Networks, Routing & Switching, Network Security' },
+              { label: 'Data & ML',     value: 'Python, Pandas, NumPy, Statistical Analysis' },
+              { label: 'Embedded',      value: 'Arduino, Proteus, Fritzing, GSM Systems' },
+            ].map((s) => (
+              <div class="border border-border bg-background p-4">
+                <p class="mb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">{s.label}</p>
+                <p class="text-sm text-muted-foreground">{s.value}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Certifications & memberships -->
+        <section>
+          <h2 class={SH}>Certifications & memberships</h2>
+          <div class="grid gap-3 sm:grid-cols-2">
+            {[
+              {
+                label: 'Certifications',
+                items: ['Cisco Junior Cybersecurity Analyst (2024)', 'Cisco Network Support and Security (2024)'],
+              },
+              {
+                label: 'Professional memberships',
+                items: [
+                  'Graduate Member, Nigerian Society of Engineers (NSE)',
+                  'Member, Nigerian Institute of Electrical and Electronics Engineers (NIEEE)',
+                  'Member, International Association of Engineers (IAENG)',
+                ],
+              },
+            ].map((col) => (
+              <div class="border border-border bg-background p-4">
+                <p class="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">{col.label}</p>
+                <ul class="space-y-1">
+                  {col.items.map((item) => (
+                    <li class="text-sm text-muted-foreground">{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Contact -->
+        <section>
+          <h2 class={SH}>Get in touch</h2>
+          <div class="border border-border bg-muted/30 p-5 dark:bg-zinc-950/40">
+            <p class="mb-4 text-sm leading-relaxed text-muted-foreground">
+              Open to research collaborations, engineering roles, and conversations about AI security or edtech.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <a href="mailto:balogunmohammedjamiu@gmail.com" class="btn-secondary text-sm">Email</a>
+              <a href="https://www.linkedin.com/in/mohammad-jamiu-balogun/" target="_blank" rel="noopener noreferrer" class="btn-secondary text-sm">LinkedIn</a>
+              <a href="https://github.com/Mohammadjamiu" target="_blank" rel="noopener noreferrer" class="btn-secondary text-sm">GitHub</a>
+              <a href="https://twitter.com/mohammadjamiu" target="_blank" rel="noopener noreferrer" class="btn-secondary text-sm">X / Twitter</a>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

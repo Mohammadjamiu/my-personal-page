@@ -1,0 +1,116 @@
+---
+const navLinks = [
+  { href: '/articles', label: 'Note' },
+  { href: '/package-radar', label: 'Radar' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/about', label: 'About' },
+];
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string) {
+  return currentPath === href || currentPath.startsWith(href + '/');
+}
+---
+
+<header class="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-md">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-14">
+      <a href="/" class="group flex items-center gap-2">
+        <span class="flex h-8 w-8 items-center justify-center border border-border bg-foreground font-serif text-sm font-bold text-background transition-colors group-hover:bg-primary group-hover:border-primary group-hover:text-primary-foreground">
+          MJ
+        </span>
+        <span class="hidden font-serif text-sm font-semibold tracking-tight text-foreground sm:block">
+          Mohammad Jamiu
+        </span>
+      </a>
+
+      <nav class="hidden items-center gap-6 md:flex" aria-label="Primary">
+        {navLinks.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              'text-sm transition-colors',
+              isActive(link.href)
+                ? 'text-primary underline decoration-primary underline-offset-[6px]'
+                : 'text-muted-foreground underline decoration-transparent underline-offset-[6px] hover:text-primary hover:decoration-primary',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))}
+      </nav>
+
+      <div class="flex items-center gap-1">
+        <button
+          id="theme-toggle"
+          type="button"
+          class="border border-transparent p-2 text-muted-foreground transition-colors hover:border-border hover:text-primary"
+          aria-label="Toggle color theme"
+        >
+          <svg class="hidden h-[18px] w-[18px] dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+          </svg>
+          <svg class="h-[18px] w-[18px] dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+          </svg>
+        </button>
+
+        <a href="/#newsletter" class="hidden btn-cta !px-3 !py-2 text-xs sm:inline-flex">Subscribe</a>
+
+        <button
+          id="mobile-menu-btn"
+          type="button"
+          class="border border-transparent p-2 text-muted-foreground hover:border-border md:hidden"
+          aria-label="Toggle menu"
+          aria-expanded="false"
+        >
+          <svg id="menu-open-icon" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+          <svg id="menu-close-icon" class="hidden h-[18px] w-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobile-menu" class="hidden border-t border-border py-3 md:hidden">
+      <nav class="flex flex-col gap-1" aria-label="Mobile">
+        {navLinks.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              'px-1 py-2 text-sm',
+              isActive(link.href) ? 'text-foreground' : 'text-muted-foreground',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))}
+        <a href="/#newsletter" class="btn-cta mt-2 text-center text-sm">Subscribe</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const root = document.documentElement;
+    const nextDark = !root.classList.contains('dark');
+    root.classList.toggle('dark', nextDark);
+    localStorage.setItem('theme', nextDark ? 'dark' : 'light');
+  });
+
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const openIcon = document.getElementById('menu-open-icon');
+  const closeIcon = document.getElementById('menu-close-icon');
+
+  btn?.addEventListener('click', () => {
+    const isOpen = menu?.classList.toggle('hidden') === false;
+    btn.setAttribute('aria-expanded', String(isOpen));
+    openIcon?.classList.toggle('hidden', isOpen);
+    closeIcon?.classList.toggle('hidden', !isOpen);
+  });
+</script>

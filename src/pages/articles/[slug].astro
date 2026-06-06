@@ -1,0 +1,202 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const categoryMeta: Record<string, { label: string }> = {
+  ai: { label: 'AI & ML' },
+  cybersecurity: { label: 'Cybersecurity' },
+  'software-engineering': { label: 'Software Eng.' },
+  research: { label: 'Research' },
+  'building-products': { label: 'Building' },
+  'africa-tech': { label: 'Africa & Tech' },
+  essays: { label: 'Essays' },
+  'personal-finance': { label: 'Finance' },
+  'dev-notes': { label: 'Dev notes' },
+};
+
+const m = categoryMeta[post.data.category] ?? categoryMeta.essays;
+---
+
+<Layout
+  title={`${post.data.title} — Mohammad Jamiu`}
+  description={post.data.description}
+  image={post.data.heroImage}
+>
+  <Header />
+
+  <main class="flex-grow">
+    <article class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+
+      <!-- Breadcrumb -->
+      <nav class="mb-10" aria-label="Breadcrumb">
+        <ol class="flex items-center gap-2 text-xs text-muted-foreground">
+          <li><a href="/" class="underline decoration-border underline-offset-4 hover:decoration-foreground">Home</a></li>
+          <li>/</li>
+          <li><a href="/articles" class="underline decoration-border underline-offset-4 hover:decoration-foreground">Note</a></li>
+          <li>/</li>
+          <li class="truncate max-w-[10rem] sm:max-w-xs text-foreground/80">{post.data.title}</li>
+        </ol>
+      </nav>
+
+      <!-- Header -->
+      <header class="mb-10 animate-fade-up">
+        <div class="flex items-center gap-2.5 mb-5 flex-wrap">
+          <a
+            href={`/category/${post.data.category}`}
+            class="tag transition-opacity hover:opacity-80"
+          >
+            {m.label}
+          </a>
+          {post.data.readingTime && (
+            <span class="text-xs text-muted-foreground">{post.data.readingTime}</span>
+          )}
+        </div>
+
+        <h1 class="font-serif text-3xl sm:text-4xl font-semibold text-foreground mb-4 leading-tight tracking-tight">
+          {post.data.title}
+        </h1>
+
+        <p class="text-base text-muted-foreground leading-relaxed mb-6">
+          {post.data.description}
+        </p>
+
+        <div class="flex items-center gap-4 text-xs text-muted-foreground border-t border-border pt-5">
+          <time datetime={post.data.pubDate.toISOString()}>
+            {post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </time>
+          {post.data.updatedDate && (
+            <>
+              <span>·</span>
+              <time datetime={post.data.updatedDate.toISOString()}>
+                Updated {post.data.updatedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </time>
+            </>
+          )}
+        </div>
+      </header>
+
+      {
+        post.data.heroImage && (
+          <figure class="article-hero-banner not-prose mb-10 overflow-hidden rounded-md border border-border">
+            <img
+              src={post.data.heroImage}
+              alt={`Illustration for: ${post.data.title}`}
+              width={1200}
+              height={630}
+              class="w-full object-cover object-top"
+              style="max-height: min(52vh, 420px)"
+              loading="eager"
+              decoding="async"
+            />
+          </figure>
+        )
+      }
+
+      <!-- Content -->
+      <div class="prose-custom article-prose">
+        <Content />
+      </div>
+
+      <dialog
+        id="article-image-lightbox"
+        class="article-image-lightbox p-3 sm:p-6"
+        aria-modal="true"
+        aria-label="Enlarged image"
+      >
+        <div class="pointer-events-auto relative flex max-h-[95dvh] max-w-[min(96vw,1200px)] flex-col items-center justify-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            id="article-image-lightbox-close"
+            class="absolute right-1 top-1 z-10 rounded-md border border-border bg-background/95 px-3 py-1.5 font-sans text-xs font-medium text-foreground shadow-sm transition-colors hover:bg-muted sm:right-2 sm:top-2"
+          >
+            Close
+          </button>
+          <img
+            id="article-image-lightbox-img"
+            class="max-h-[88dvh] max-w-full rounded-md object-contain shadow-2xl ring-1 ring-border"
+            alt=""
+            decoding="async"
+          />
+          <p class="font-sans text-[11px] text-muted-foreground sm:text-xs">Click the dimmed area or Close · Escape</p>
+        </div>
+      </dialog>
+
+      <script>
+        function initArticleImageLightbox() {
+          const root = document.querySelector('.article-prose');
+          const dialogEl = document.querySelector('#article-image-lightbox');
+          const lightboxImg = document.querySelector('#article-image-lightbox-img');
+          const closeBtn = document.querySelector('#article-image-lightbox-close');
+          if (!(dialogEl instanceof HTMLDialogElement) || !(lightboxImg instanceof HTMLImageElement) || !root) return;
+          const dialog = dialogEl;
+
+          root.querySelectorAll('img').forEach((img) => {
+            if (img.closest('a')) return;
+            if (!img.title) img.title = 'Click to enlarge';
+            img.addEventListener('click', () => {
+              lightboxImg.src = img.currentSrc || img.src;
+              lightboxImg.alt = img.alt || '';
+              dialog.showModal();
+            });
+          });
+
+          function closeLb() {
+            if (dialog.open) dialog.close();
+          }
+
+          closeBtn?.addEventListener('click', closeLb);
+          dialog.addEventListener('click', (e) => {
+            if (e.target === dialog) closeLb();
+          });
+          dialog.addEventListener('close', () => {
+            lightboxImg.removeAttribute('src');
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initArticleImageLightbox, { once: true });
+        } else {
+          initArticleImageLightbox();
+        }
+      </script>
+
+      <!-- Tags -->
+      {post.data.tags.length > 0 && (
+        <div class="mt-12 pt-8 border-t border-border">
+          <p class="section-eyebrow mb-3">Tags</p>
+          <div class="flex flex-wrap gap-2">
+            {post.data.tags.map((tag) => (
+              <span class="tag">#{tag}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <!-- Newsletter CTA -->
+      <div class="mt-12 border border-border bg-muted/30 p-6 sm:p-8 dark:bg-zinc-950/40">
+        <Newsletter
+          compact
+          title="Enjoyed this?"
+          description="Get notified when I publish new articles. No spam, unsubscribe anytime."
+        />
+      </div>
+
+    </article>
+  </main>
+
+  <Footer />
+</Layout>

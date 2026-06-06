@@ -1,0 +1,37 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Page Not Found — Mohammad Jamiu">
+  <Header />
+
+  <main class="flex-grow flex items-center justify-center px-4 py-24">
+    <div class="text-center max-w-sm animate-fade-up">
+      <div class="terminal-block max-w-[260px] mx-auto mb-8 text-left">
+        <div class="terminal-bar">
+          <span class="terminal-dot bg-rose-500"></span>
+          <span class="terminal-dot bg-amber-400"></span>
+          <span class="terminal-dot bg-emerald-500"></span>
+        </div>
+        <div class="terminal-body text-xs space-y-1">
+          <p><span class="text-zinc-500">$</span> <span class="text-zinc-300">curl {Astro.url.pathname}</span></p>
+          <p class="text-rose-400">404 Not Found</p>
+          <p class="text-zinc-500"># page does not exist</p>
+        </div>
+      </div>
+
+      <h1 class="font-serif text-2xl sm:text-3xl font-semibold text-ink mb-3">Page not found</h1>
+      <p class="text-sm text-ink-muted mb-8 leading-relaxed">
+        The page you're looking for doesn't exist or has been moved.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="/" class="btn-cta">Go home</a>
+        <a href="/articles" class="btn-secondary">Read articles</a>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

@@ -1,0 +1,49 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+  compact?: boolean;
+}
+
+const {
+  title = 'Get new posts in your inbox',
+  description = 'Writing on AI, cybersecurity, software engineering, and building technology responsibly. No spam.',
+  compact = false,
+} = Astro.props;
+---
+
+<section class:list={[!compact && 'py-2']}>
+  <h2 class:list={[
+    'font-serif font-semibold text-ink text-balance',
+    compact ? 'text-lg mb-2' : 'text-2xl sm:text-3xl mb-3',
+  ]}>
+    {title}
+  </h2>
+
+  <p class:list={[
+    'text-ink-muted leading-relaxed',
+    compact ? 'text-sm mb-4' : 'text-base mb-7 max-w-lg',
+    !compact && 'text-center mx-auto',
+  ]}>
+    {description}
+  </p>
+
+  <form
+    action="https://buttondown.email/api/emails/embed-subscribe/mohammadjamiu"
+    method="post"
+    target="popupwindow"
+    onsubmit="window.open('https://buttondown.email/mohammadjamiu', 'popupwindow')"
+    class:list={[
+      'flex gap-2',
+      compact ? 'flex-col sm:flex-row' : 'flex-col sm:flex-row max-w-md',
+      !compact && 'mx-auto',
+    ]}
+  >
+    <input type="email" name="email" placeholder="you@example.com" required class="input-field flex-1" />
+    <button type="submit" class="btn-cta whitespace-nowrap">Subscribe</button>
+  </form>
+
+  <p class:list={['mt-4 text-xs text-muted-foreground', !compact && 'text-center']}>
+    Or follow via <a href="/rss.xml" class="font-medium underline decoration-border underline-offset-4 hover:decoration-foreground">RSS</a>
+  </p>
+</section>

@@ -1,0 +1,165 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const posts = allPosts
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const categoryMeta: Record<string, { label: string }> = {
+  'dev-notes': { label: 'Dev notes' },
+  ai: { label: 'AI & ML' },
+  cybersecurity: { label: 'Cybersecurity' },
+  'software-engineering': { label: 'Software Eng.' },
+  research: { label: 'Research' },
+  'building-products': { label: 'Building' },
+  'africa-tech': { label: 'Africa & Tech' },
+  essays: { label: 'Essays' },
+  'personal-finance': { label: 'Finance' },
+};
+
+const categoryOrder = [
+  'dev-notes',
+  'ai',
+  'cybersecurity',
+  'software-engineering',
+  'research',
+  'building-products',
+  'africa-tech',
+  'essays',
+  'personal-finance',
+] as const;
+
+const byCategory = new Map<string, typeof posts>();
+for (const p of posts) {
+  const key = p.data.category;
+  const list = byCategory.get(key) ?? [];
+  list.push(p);
+  byCategory.set(key, list);
+}
+
+const sections = categoryOrder
+  .map((id) => {
+    const list = byCategory.get(id);
+    if (!list?.length) return null;
+    const m = categoryMeta[id] ?? { label: id };
+    return { id, label: m.label, posts: list.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()) };
+  })
+  .filter(Boolean) as { id: string; label: string; posts: typeof posts }[];
+---
+
+<Layout
+  title="Note — Mohammad Jamiu"
+  description="Articles and notes on AI, cybersecurity, software engineering, finance, coding snippets, and research."
+>
+  <Header />
+
+  <main class="flex-grow">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+      <PageHeader
+        label="Note"
+        title="All articles"
+        description="Browse everything in one list, or open a category below when you want to focus."
+        meta={`${posts.length} ${posts.length === 1 ? 'article' : 'articles'} published`}
+      />
+
+      <div class="mb-10 space-y-2">
+        <p class="section-eyebrow">By category</p>
+        <p class="text-sm text-muted-foreground leading-relaxed">
+          Each section expands to show posts in that topic. <a href="#all-posts" class="text-primary underline decoration-border underline-offset-4 hover:decoration-primary">Skip to the full list</a> if you prefer scrolling everything chronologically.
+        </p>
+        <div class="mt-4 space-y-2">
+          {sections.map(({ id, label, posts: catPosts }) => (
+            <details class="group border border-border bg-background">
+              <summary class="cursor-pointer list-none px-4 py-3 font-sans text-sm font-medium text-foreground marker:hidden [&::-webkit-details-marker]:hidden flex items-center justify-between gap-3 hover:bg-muted/40">
+                <span class="flex items-center gap-2 min-w-0">
+                  <span class="shrink-0 text-muted-foreground transition-transform group-open:rotate-90" aria-hidden="true">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                  <span class="truncate">{label}</span>
+                  <span class="shrink-0 text-xs font-normal text-muted-foreground">({catPosts.length})</span>
+                </span>
+                <a
+                  href={`/category/${id}`}
+                  class="shrink-0 text-xs text-primary underline decoration-transparent underline-offset-4 hover:decoration-primary"
+                  onclick="event.stopPropagation()"
+                >
+                  Category page
+                </a>
+              </summary>
+              <div class="border-t border-border px-4 py-2 pb-4">
+                <ul class="space-y-1">
+                  {catPosts.map((post) => {
+                    const time = post.data.readingTime ? ` · ${post.data.readingTime}` : '';
+                    return (
+                      <li>
+                        <a
+                          href={`/articles/${post.id}`}
+                          class="block rounded-sm px-2 py-2 text-sm leading-snug text-foreground hover:bg-muted/50"
+                        >
+                          <span class="font-medium">{post.data.title}</span>
+                          <span class="mt-0.5 block text-xs text-muted-foreground">
+                            <time datetime={post.data.pubDate.toISOString()}>
+                              {post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                            </time>
+                            {time}
+                          </span>
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <div id="all-posts" class="scroll-mt-24">
+        <p class="section-eyebrow mb-4">Newest first</p>
+        <div class="space-y-3">
+          {posts.map((post) => {
+            const m = categoryMeta[post.data.category] ?? { label: post.data.category };
+            return (
+              <article>
+                <a href={`/articles/${post.id}`} class="group block border border-border bg-background p-5 sm:p-6 transition-colors duration-150 hover:border-foreground/25">
+                  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2.5">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="tag">{m.label}</span>
+                      {post.data.readingTime && (
+                        <span class="text-[11px] text-muted-foreground">{post.data.readingTime}</span>
+                      )}
+                    </div>
+                    <time datetime={post.data.pubDate.toISOString()} class="text-[11px] font-medium text-muted-foreground shrink-0">
+                      {post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    </time>
+                  </div>
+
+                  <h2 class="font-serif text-lg sm:text-xl font-semibold text-foreground mb-1.5 leading-snug">
+                    {post.data.title}
+                  </h2>
+
+                  <p class="text-sm text-ink-muted leading-relaxed line-clamp-2">{post.data.description}</p>
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+
+      {posts.length === 0 && (
+        <div class="card text-center py-16">
+          <p class="text-ink-subtle">No articles yet. Check back soon.</p>
+        </div>
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

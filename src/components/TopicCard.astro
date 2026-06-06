@@ -1,0 +1,38 @@
+---
+import type { TopicIconName } from '../lib/topic-icons';
+import TopicIcon from './TopicIcon.astro';
+
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  icon: TopicIconName;
+  tint: 'violet' | 'rose' | 'sky' | 'indigo' | 'emerald' | 'amber' | 'zinc';
+}
+
+const { href, title, description, icon } = Astro.props;
+---
+
+<a
+  href={href}
+  class="group flex h-full min-h-0 flex-col border border-border bg-background p-4 transition-colors duration-150 hover:border-primary sm:p-5"
+>
+  <span class="mb-3 flex items-center justify-center self-start border border-border bg-muted/50 p-2 text-primary transition-colors group-hover:border-primary group-hover:bg-primary/10">
+    <TopicIcon name={icon} />
+  </span>
+
+  <h3 class="font-serif text-base font-semibold text-foreground mb-1.5 transition-colors group-hover:text-primary">
+    {title}
+  </h3>
+
+  <p class="mb-4 flex-grow text-sm leading-relaxed text-muted-foreground">
+    {description}
+  </p>
+
+  <span class="link-arrow group mt-auto text-xs">
+    Explore
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="h-3 w-3">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+    </svg>
+  </span>
+</a>

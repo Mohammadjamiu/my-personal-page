@@ -1,0 +1,172 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { sortProjects } from '@/lib/sort-projects';
+import { getCollection } from 'astro:content';
+
+const allProjects = await getCollection('projects');
+const projects = sortProjects(allProjects);
+const openSource = projects.filter((p) => p.data.openSource);
+const other = projects.filter((p) => !p.data.openSource);
+---
+
+<Layout
+  title="Projects — Mohammad Jamiu"
+  description="Open source libraries and other work — with links to GitHub and npm where applicable."
+>
+  <Header />
+
+  <main class="flex-grow">
+    <div class="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
+      <PageHeader
+        label="Work"
+        title="Projects"
+        description="Things I have built and shared. Open source entries include repository links and npm when the package is published."
+        meta={`${projects.length} ${projects.length === 1 ? 'project' : 'projects'}`}
+      />
+
+      <div class="space-y-14">
+        {
+          openSource.length > 0 && (
+            <div>
+              <h2 class="section-eyebrow mb-4 text-[10px] font-semibold uppercase tracking-[0.22em] text-primary">Open source</h2>
+              <div class="space-y-5">
+                {openSource.map((project) => (
+                  <article class="border border-border bg-background p-5 sm:p-8">
+                    <div class="mb-3 flex flex-wrap items-center gap-3">
+                      <h3 class="font-serif text-xl font-semibold leading-snug text-foreground sm:text-2xl">{project.data.title}</h3>
+                      <span class="tag capitalize">{project.data.status}</span>
+                      <span class="tag normal-case tracking-normal">Open source</span>
+                    </div>
+
+                    <p class="mb-5 text-sm leading-relaxed text-muted-foreground">{project.data.description}</p>
+
+                    {project.data.tags.length > 0 && (
+                      <div class="mb-5 flex flex-wrap gap-2">
+                        {project.data.tags.map((tag) => (
+                          <span class="tag normal-case tracking-normal">{tag}</span>
+                        ))}
+                      </div>
+                    )}
+
+                    <div class="flex flex-wrap items-center gap-4 border-t border-border pt-4">
+                      {project.data.github && (
+                        <a
+                          href={project.data.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="inline-flex items-center gap-1.5 text-sm font-medium text-ink-muted transition-colors hover:text-ink"
+                        >
+                          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                              fill-rule="evenodd"
+                              d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                          GitHub
+                        </a>
+                      )}
+                      {project.data.npm && (
+                        <a
+                          href={project.data.npm}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="link-arrow group inline-flex text-sm"
+                        >
+                          npm
+                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:13px;height:13px" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                      )}
+                      {project.data.url && (
+                        <a
+                          href={project.data.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="link-arrow group inline-flex text-sm"
+                        >
+                          Live site
+                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:13px;height:13px" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )
+        }
+
+        {
+          other.length > 0 && (
+            <div>
+              <h2 class="section-eyebrow mb-4 text-[10px] font-semibold uppercase tracking-[0.22em] text-primary">Other work</h2>
+              <div class="space-y-5">
+                {other.map((project) => (
+                  <article class="border border-border bg-background p-5 sm:p-8">
+                    <div class="mb-3 flex flex-wrap items-center gap-3">
+                      <h3 class="font-serif text-xl font-semibold leading-snug text-foreground sm:text-2xl">{project.data.title}</h3>
+                      <span class="tag capitalize">{project.data.status}</span>
+                    </div>
+
+                    <p class="mb-5 text-sm leading-relaxed text-muted-foreground">{project.data.description}</p>
+
+                    {project.data.tags.length > 0 && (
+                      <div class="mb-5 flex flex-wrap gap-2">
+                        {project.data.tags.map((tag) => (
+                          <span class="tag normal-case tracking-normal">{tag}</span>
+                        ))}
+                      </div>
+                    )}
+
+                    <div class="flex flex-wrap items-center gap-4 border-t border-border pt-4">
+                      {project.data.url && (
+                        <a href={project.data.url} target="_blank" rel="noopener noreferrer" class="link-arrow group inline-flex text-sm">
+                          Visit site
+                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:13px;height:13px" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                      )}
+                      {project.data.github && (
+                        <a
+                          href={project.data.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="inline-flex items-center gap-1.5 text-sm font-medium text-ink-muted transition-colors hover:text-ink"
+                        >
+                          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                              fill-rule="evenodd"
+                              d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                          Source
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )
+        }
+      </div>
+
+      {projects.length === 0 && (
+        <div class="card py-16 text-center">
+          <p class="text-ink-subtle">No projects listed yet.</p>
+        </div>
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
